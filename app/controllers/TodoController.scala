@@ -8,7 +8,7 @@ import play.api.data.Forms._
 
 import services._
 
-class TodoController @Inject()(mcc: MessagesControllerComponents)
+class TodoController @Inject()(todoService: TodoService, mcc: MessagesControllerComponents)
 extends MessagesAbstractController(mcc) {
 
   def helloworld() = Action { implicit request: MessagesRequest[AnyContent] =>
@@ -16,7 +16,7 @@ extends MessagesAbstractController(mcc) {
   }
 
   def list() = Action { implicit request: MessagesRequest[AnyContent] =>
-    val items: Seq[Todo] = Seq(Todo("Todo1"), Todo("Todo2"))
+    val items: Seq[Todo] = todoService.list()
     Ok(views.html.list(items))
   }
 
