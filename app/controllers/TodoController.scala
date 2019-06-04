@@ -28,8 +28,19 @@ extends MessagesAbstractController(mcc) {
 
   def todoAdd() = Action { implicit request: MessagesRequest[AnyContent] =>
     val name: String = todoForm.bindFromRequest().get
-    todoService.insert(Todo(name))
+    todoService.insert(Todo(id = None, name))
     Redirect(routes.TodoController.list())
   }
 
+  def todoEdit(todoId: Long) = Action { implicit request: MessagesRequest[AnyContent] =>
+    todoService.findById(todoId).map { todo =>
+      Ok(views.html.editForm(todoId, todoForm.fill(todo.name)))
+    }.getOrElse(NotFound)
+  }
+
+  def todoUpdate(todoId: Long) = Action { implicit request: MessagesRequest[AnyContent] =>
+    val name: String = todoForm.bindFromRequest().get
+    todoService.update(todoId, Todo(Some(todoId), name))
+    Redirect(routes.TodoController.list())
+  }
 }
